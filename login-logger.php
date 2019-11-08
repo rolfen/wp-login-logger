@@ -1,16 +1,15 @@
 <?php
 
 /**
- * Plugin Name: My Plugin
- * Plugin URI: http://www.mywebsite.com/
+ * Plugin Name: Basic Login logger
+ * Plugin URI: https://github.com/rolfen/wp-login-logger
  * Description: Login logging plugin.
  * Version: 1.0
- * Author: Your Name
+ * Author: Rolf
  * Author URI: http://github.com/rolfen
  */
 
-add_action('wp_login', 'log_details');
-
+add_action('wp_login', 'log_details', 10, 2);
 
 function get_user_ip() {
 	if ( ! empty( $_SERVER['HTTP_CLIENT_IP'] ) ) {
@@ -25,15 +24,22 @@ function get_user_ip() {
 	return $ip;
 }
  
-function log_details() {
-	error_log(get_user_ip());
-    //do stuff
+
+function log_details($user_login, $user) {
+	append_to_log(
+		array(
+			get_user_ip(),
+			$user_login,
+			implode(' ', $user->roles)
+		)
+	);
 }
 
-/**
- Sources:
- - https://www.wpbeginner.com/wp-tutorials/how-to-display-a-users-ip-address-in-wordpress/
- - https://wordpress.stackexchange.com/questions/28522/is-there-a-hook-that-runs-after-a-user-logs-in
-*/
+function append_to_log($message) {
+	// $message is an array
+	$file = fopen("./login.log","a"); 
+	fwrite($file, date('Y-m-d h:i:s') . ", " . implode(', ', $message) . "\n"); 
+	fclose($file); 
+}
 
 ?>
