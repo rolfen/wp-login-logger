@@ -1,3 +1,7 @@
+## Description
+
+This Wordpress plugin will log successful logins in a comma-delimited text file in the plugin directory.
+
 ## Installing
 
  - Create a `basic-login-logger` directory in your `plugins` directory (usually `wp-content/plugins`).
