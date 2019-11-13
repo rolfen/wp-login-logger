@@ -3,16 +3,17 @@
 /**
  * Plugin Name: Basic Login logger
  * Plugin URI: https://github.com/rolfen/wp-login-logger
- * Description: Login logging plugin.
+ * Description: Logs successful login and logout events.
  * Version: 1.0
  * Author: Rolf
  * Author URI: http://github.com/rolfen
  */
 
-add_action('wp_login', 'log_details', 10, 2);
+add_action('wp_login', 'login_hook', 10, 2);
+add_action('clear_auth_cookie', 'logout_hook');
 
 /**
- * Get IP of logged in user
+ * Get IP of client
  * @returns {string} IP
  */
 function get_user_ip() {
@@ -29,18 +30,35 @@ function get_user_ip() {
 }
  
 /**
- * Callback for the wp_login action
+ * Gets called when user logs in (wp_login action)
  * @param {string} $user_login - The WordPress username of the logged in user
  * @param {object} $user - The WP_User object of the logged in user
  */
-function log_details($user_login, $user) {
+function login_hook($user_login, $user) {
 	append_to_log(
 		array(
+			'login',
 			get_user_ip(),
 			$user_login,
 			implode(' ', $user->roles)
 		)
 	);
+}
+
+/**
+ * Gets called just before user logs out
+ */
+function logout_hook() {
+	if($user = wp_get_current_user()) {
+		append_to_log(
+			array(
+				'logout',
+				get_user_ip(),
+				$user->user_login,
+				implode(' ', $user->roles)
+			)
+		);
+	}
 }
 
 /**
