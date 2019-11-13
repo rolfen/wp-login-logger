@@ -1,6 +1,6 @@
 ## Description
 
-This Wordpress plugin will log successful logins in a comma-delimited text file in the plugin directory.
+This Wordpress plugin will log successful login and logout events in a comma-delimited text file in the plugin directory.
 
 ## Installing
 
